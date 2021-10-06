@@ -1,29 +1,33 @@
 const costsForOnePlant = 1;
 
-const getCostsForCrop = (input) => {    
-    const totalCosts = input.numCrops * costsForOnePlant;
-    return totalCosts;
+const getCostsForCrop = (input) => {
+  const totalCosts = input.numCrops * costsForOnePlant;
+  return totalCosts;
 };
 
 const getRevenueForCrop = (input) => {
-    const revenueForCrop = input.crop.yield * input.numCrops * input.salesPrice;
-    return revenueForCrop;
+  const revenueForCrop = input.crop.yield * input.numCrops * input.salesPrice;
+  return revenueForCrop;
 };
 
 const getProfitForCrop = (input) => {
-    const profitForCrop = getRevenueForCrop(input) - getCostsForCrop(input);
-    return profitForCrop;
+  const profitForCrop = getRevenueForCrop(input) - getCostsForCrop(input);
+  return profitForCrop;
 };
 
 const getTotalProfit = (input) => {
-    const crops = input.crops;
-    const profit = crops.map(input => getProfitForCrop(input));
-    const totalProfit = profit.reduce((acc, cur) => acc + cur);
-    return totalProfit;
+  const crops = input.crops;
+  const profit = crops.map((input) => getProfitForCrop(input));
+  const totalProfit = profit.reduce((acc, cur) => acc + cur);
+  return totalProfit;
 };
 
 const getYieldForPlant = (crop, environmentFactors) => {
-  if (!environmentFactors || environmentFactors.sun === "medium" || environmentFactors.rain === "medium"
+  if (
+    !environmentFactors ||
+    environmentFactors.sun === "medium" ||
+    environmentFactors.rain === "medium" ||
+    environmentFactors.wind === "low"
   ) {
     return crop.yield;
   }
@@ -48,30 +52,48 @@ const getYieldForPlant = (crop, environmentFactors) => {
   if (!environmentFactors.rain) {
     rain = 1;
   } else {
-      switch (environmentFactors.rain) {
-        case "low":
-          rain = (100 + crop.factors.rain.low) / 100;
-          break;
-        case "medium":
-          rain = (100 + crop.factors.rain.medium) / 100;
-          break;
-        case "high":
-          rain = (100 + crop.factors.rain.high) / 100;
-          break;
-        default:
-          rain = 1;
-      }
+    switch (environmentFactors.rain) {
+      case "low":
+        rain = (100 + crop.factors.rain.low) / 100;
+        break;
+      case "medium":
+        rain = (100 + crop.factors.rain.medium) / 100;
+        break;
+      case "high":
+        rain = (100 + crop.factors.rain.high) / 100;
+        break;
+      default:
+        rain = 1;
+    }
   }
-  const yieldPerPlant = crop.yield * sun * rain;
+
+  if (!environmentFactors.wind) {
+    wind = 1;
+  } else {
+    switch (environmentFactors.wind) {
+      case "low":
+        wind = (100 + crop.factors.wind.low) / 100;
+        break;
+      case "medium":
+        wind = (100 + crop.factors.wind.medium) / 100;
+        break;
+      case "high":
+        wind = (100 + crop.factors.wind.high) / 100;
+        break;
+      default:
+        wind = 1;
+    }
+  }
+  const yieldPerPlant = crop.yield * sun * rain * wind;
   return parseFloat(yieldPerPlant.toFixed(1));
 };
 
-module.exports = { 
-    getYieldForPlant, 
-    // getYieldForCrop, 
-    // getTotalYield,
-    getCostsForCrop,
-    getRevenueForCrop,
-    getProfitForCrop,
-    getTotalProfit 
+module.exports = {
+  getYieldForPlant,
+  // getYieldForCrop,
+  // getTotalYield,
+  getCostsForCrop,
+  getRevenueForCrop,
+  getProfitForCrop,
+  getTotalProfit,
 };

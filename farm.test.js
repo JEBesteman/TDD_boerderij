@@ -62,6 +62,28 @@ describe("getYieldForPlant", () => {
   });
 });
 
+describe("getYieldForPlant", () => {
+  test("Get yield for plant with low wind environment factor which has no influence on yield", () => {
+    const apple = {
+      name: "apple",
+      yield: 25,
+      factors: {
+        wind: {
+          low: 0,
+          medium: -30,
+          high: -60,
+        },
+      },
+    };
+
+    const environmentFactors = {
+      wind: "low",
+    };
+    expect(getYieldForPlant(apple, environmentFactors)).toBe(25);
+  });
+});
+
+
 // describe("getYieldForCrop", () => {
 //   test("Get yield for crop, simple", () => {
 //     const corn = {

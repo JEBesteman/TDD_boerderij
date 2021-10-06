@@ -18,14 +18,37 @@ const getProfitForCrop = (input) => {
 const getTotalProfit = (input) => {
     const crops = input.crops;
     const profit = crops.map(input => getProfitForCrop(input));
-    return profit.reduce((acc, cur) => acc + cur);
+    const totalProfit = profit.reduce((acc, cur) => acc + cur);
+    return totalProfit;
 };
 
-
-
+const getYieldForPlant = (input, environmentFactors) => {
+    if (!environmentFactors || environmentFactors.sun === "medium") {
+        return input.yield;
+    } 
+    if (!environmentFactors.sun) {
+        sun = 1;
+    } else {
+        switch(environmentFactors.sun) {
+            case "low":
+                sun = (100 + input.factors.sun.low)/100;
+                break;
+            case "medium":
+                sun = (100 + input.factors.sun.medium)/100;
+                break;
+            case "high":
+                sun = (100 + input.factors.sun.high)/100;
+                break;  
+            default:
+                sun = 1;          
+        };
+    };    
+    const yieldPerPlant = input.yield * sun;
+    return parseFloat(yieldPerPlant.toFixed(1)); 
+};
 
 module.exports = { 
-    // getYieldForPlant, 
+    getYieldForPlant, 
     // getYieldForCrop, 
     // getTotalYield,
     getCostsForCrop,

@@ -21,7 +21,7 @@ describe("getYieldForPlant", () => {
 });
 
 describe("getYieldForPlant", () => {
-  test("Get yield for plant with environment factors", () => {
+  test("Get yield for plant with low sun environment factor", () => {
     const corn = {
       name: "corn",
       yield: 30,
@@ -38,6 +38,27 @@ describe("getYieldForPlant", () => {
       sun: "low",
     };
     expect(getYieldForPlant(corn, environmentFactors)).toBe(15);
+  });
+});
+
+describe("getYieldForPlant", () => {
+  test("Get yield for plant with high rain environment factor", () => {
+    const pumpkin = {
+      name: "pumpkin",
+      yield: 30,
+      factors: {
+        rain: {
+          low: -20,
+          medium: 0,
+          high: -50,
+        },
+      },
+    };
+
+    const environmentFactors = {
+      rain: "high",
+    };
+    expect(getYieldForPlant(pumpkin, environmentFactors)).toBe(15);
   });
 });
 

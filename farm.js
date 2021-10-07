@@ -1,36 +1,20 @@
 const costsForOnePlant = 1;
 
-const getCostsForCrop = (input) => {
-  const totalCosts = input.numCrops * costsForOnePlant;
-  return totalCosts;
-};
+const getCostsForCrop = (input) => input.numCrops * costsForOnePlant;
 
-const getRevenueForCrop = (input) => {
-  const revenueForCrop = input.crop.yield * input.numCrops * input.salesPrice;
-  return revenueForCrop;
-};
+const getRevenueForCrop = (input, environmentfactors) =>
+  getYieldForCrop(input, environmentfactors) * input.salesPrice;
 
-const getProfitForCrop = (input) => {
-  const profitForCrop = getRevenueForCrop(input) - getCostsForCrop(input);
-  return profitForCrop;
-};
-
-const getTotalProfit = (input) => {
-  const crops = input.crops;
-  const profit = crops.map((input) => getProfitForCrop(input));
-  const totalProfit = profit.reduce((acc, cur) => acc + cur);
-  return totalProfit;
-};
+const getProfitForCrop = (input, environmentFactors) =>
+  getRevenueForCrop(input, environmentFactors) - getCostsForCrop(input);
 
 const getYieldForPlant = (crop, environmentFactors) => {
-  if (
-    !environmentFactors ||
-    environmentFactors.sun === "medium" ||
-    environmentFactors.rain === "medium" ||
-    environmentFactors.wind === "low"
-  ) {
+  if (!environmentFactors) {
     return crop.yield;
   }
+  let sun;
+  let rain;
+  let wind;
   if (!environmentFactors.sun) {
     sun = 1;
   } else {
@@ -85,19 +69,38 @@ const getYieldForPlant = (crop, environmentFactors) => {
     }
   }
   const yieldPerPlant = crop.yield * sun * rain * wind;
-  return parseFloat(yieldPerPlant.toFixed(1));
+  return parseFloat(yieldPerPlant.toFixed(2));
 };
 
 const getYieldForCrop = (input, environmentFactors) => {
-    if(!environmentFactors) {
-        return input.numCrops * input.crop.yield;
-    } return input.numCrops * getYieldForPlant(input.crop, environmentFactors);
+  if (!environmentFactors || input.numCrops === 0) {
+    return input.numCrops * input.crop.yield;
+  }
+  return input.numCrops * getYieldForPlant(input.crop, environmentFactors);
+};
+
+const getTotalYield = ({ crops }, environmentFactors) => {
+  const yieldPerCrop = crops.map((crop) =>
+    getYieldForCrop(crop, environmentFactors)
+  );
+  const reducer = (acc, curr) => acc + curr;
+  const totalYield = yieldPerCrop.reduce(reducer);
+  return parseFloat(totalYield.toFixed(2));
+};
+
+const getTotalProfit = ({ crops }, environmentFactors) => {
+  const profitPerCrop = crops.map((crop) =>
+    getProfitForCrop(crop, environmentFactors)
+  );
+  const reducer = (acc, curr) => acc + curr;
+  const totalProfit = profitPerCrop.reduce(reducer);
+  return parseFloat(totalProfit.toFixed(2));
 };
 
 module.exports = {
   getYieldForPlant,
   getYieldForCrop,
-  // getTotalYield,
+  getTotalYield,
   getCostsForCrop,
   getRevenueForCrop,
   getProfitForCrop,
